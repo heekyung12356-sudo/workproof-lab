@@ -15,7 +15,7 @@ export const NETGEAR: Company = {
   consoleName: 'Enterprise Support Desk',
   org: 'NETGEAR Enterprise Support · L2',
   about:
-    'Front-line L2 support for NETGEAR business networking — switches, wireless access points, business routers, NAS, NETGEAR Insight, and Exium. This demo simulates a real escalated case: structured troubleshooting, customer communication across technical levels (KO/EN), and a clean L2↔L3 escalation decision.',
+    'Front-line L2 support for NETGEAR business networking — Insight-managed switches, WAX-series WiFi 6 access points, business routers, NAS, the NETGEAR Insight cloud platform, and Exium (NETGEAR’s SASE security: ZTNA / SD-WAN / firewall for SMEs & MSPs). This demo simulates a real escalated case: structured troubleshooting, customer communication across technical levels (KO/EN), and a clean L2↔L3 escalation decision.',
   source: 'Public job description (Level 2 Technical Support Engineer)',
   hook: 'I built a working L2 support-desk simulation of a NETGEAR enterprise case — structured troubleshooting, an L3 escalation decision, and customer comms — so you can see how I work before we ever talk.',
   requirements: [
@@ -52,6 +52,7 @@ export const NETGEAR: Company = {
     { id: 'NG-5030', primary: 'Clinic — NAS volume degraded (RAID)', secondary: 'ReadyNAS · storage', tag: 'P1', tagTone: 'rose', right: 'SLA 01:25', signal: 'Assist: 1 disk SMART pre-fail' },
     { id: 'NG-5025', primary: 'Cafe chain — guest WiFi captive portal fails', secondary: 'Insight · wireless', tag: 'P3', tagTone: 'fog', right: 'SLA 22:00', signal: 'Assist: cloud config drift' },
     { id: 'NG-5031', primary: 'SMB — business router VPN drops nightly', secondary: 'Router · wired', tag: 'P3', tagTone: 'fog', right: 'SLA 19:30', signal: 'Assist: ISP MTU / rekey window' },
+    { id: 'NG-5034', primary: 'MSP — Exium ZTNA policy blocks a SaaS app', secondary: 'Exium · SASE/security', tag: 'P2', tagTone: 'amber', right: 'SLA 06:45', signal: 'Assist: over-broad zero-trust rule likely' },
   ],
   panelTitle: 'Knowledge Base (recent fixes)',
   panel: [
@@ -59,6 +60,7 @@ export const NETGEAR: Company = {
     { primary: 'Firmware x.y.z regression: AP client steering', secondary: 'KB-2240 · known issue, L3 owns fix' },
     { primary: 'Native-VLAN mismatch breaks trunk', secondary: 'KB-1980 · wired' },
     { primary: 'Insight cloud config drift after bulk change', secondary: 'KB-2102 · cloud' },
+    { primary: 'Exium ZTNA: over-broad rule blocks SaaS traffic', secondary: 'KB-2310 · SASE/security' },
   ],
   scenario: {
     id: 'wireless-instability',
