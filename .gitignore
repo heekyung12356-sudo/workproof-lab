@@ -1,0 +1,31 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# environment
+.env
+.env.production
+.dev.vars
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.deepseek-code/
+
+# os
+.DS_Store
+Thumbs.db
+
+# wrangler
+.wrangler/
+
+# local-only docs (spec + private conversation history) — never publish
+docs/

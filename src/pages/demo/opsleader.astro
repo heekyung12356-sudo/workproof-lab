@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import OpsLeaderDemo from '../../components/demo/OpsLeaderDemo.tsx';
+import { SCENARIO_01 } from '../../data/scenarios/scenario01';
+---
+
+<Base
+  title="Play the Ops Crisis"
+  description="Step into a Monday-morning ops crisis — staffing shortage, VIP SLA risk, a junior agent's data mistake, and executive reporting pressure. No login. Make the calls yourself."
+>
+  <div class="mx-auto max-w-6xl px-4 py-8">
+    <header class="mb-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">
+        OpsLeader WorkProof Lab · Scenario 01
+      </p>
+      <h1 class="mt-1 text-2xl font-bold text-fog-100">{SCENARIO_01.name}</h1>
+      <p class="text-sm text-fog-400">{SCENARIO_01.tagline}</p>
+    </header>
+
+    <OpsLeaderDemo client:load />
+  </div>
+</Base>

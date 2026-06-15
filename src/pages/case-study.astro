@@ -1,0 +1,181 @@
+---
+import Base from '../layouts/Base.astro';
+import { DIMENSIONS } from '../data/scoring';
+import { KPI_DEFS, ESCALATION_CHAIN } from '../data/ops-spec';
+
+const sections = [
+  {
+    n: 1,
+    title: 'Problem',
+    body: 'Companies want experienced operations leaders, but candidates rarely get access to real operational scenarios before being hired — and a résumé that reads "customer support" gets filtered out before anyone tests the judgment behind it. The gap isn’t ability; it’s a way to prove ability.',
+  },
+  {
+    n: 2,
+    title: 'Solution',
+    body: 'A realistic, no-login simulation that tests the calls an ops lead actually makes — prioritization, staffing, SLA judgment, escalation, customer communication, and recovery planning — and then exposes my reasoning and trade-offs transparently, so the proof is the thinking, not a self-awarded grade.',
+  },
+  {
+    n: 3,
+    title: 'System Design',
+    body: 'Static-first architecture (Astro, zero-JS by default) with a single interactive React island for the demo. Seeded data, a step-based scenario engine, a deterministic scoring rubric, dynamic result generation, and an optional AI review that always falls back to local. Deployed on Cloudflare Pages with an optional Pages Function for the AI route.',
+  },
+];
+---
+
+<Base
+  title="Case Study — How I designed a realistic ops simulation"
+  description="The system design behind WorkProof Lab: data model, scenario state machine, deterministic scoring rubric, AI-with-fallback architecture, and edge-case handling."
+>
+  <div class="mx-auto max-w-3xl px-4 py-10">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">Case study</p>
+      <h1 class="mt-1 text-3xl font-bold text-fog-100">
+        How I designed a realistic operations leadership simulation
+      </h1>
+    </header>
+
+    <div class="space-y-7">
+      {
+        sections.map((s) => (
+          <section>
+            <h2 class="text-lg font-bold text-fog-100">
+              <span class="font-mono text-sky">{s.n}.</span> {s.title}
+            </h2>
+            <p class="mt-2 text-sm leading-relaxed text-fog-300">{s.body}</p>
+          </section>
+        ))
+      }
+
+      <!-- 4. Data Model -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">4.</span> Data Model</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          Every number on screen is computed from seed data, never decorative. The model:
+        </p>
+        <ul class="mt-2 space-y-1.5 text-sm text-fog-300">
+          <li>• <strong class="text-fog-200">Team</strong> — role, tenure, a 0–5 skill matrix (billing/technical/de-escalation), languages, timezone, and live status. Available headcount = total − (absent + training).</li>
+          <li>• <strong class="text-fog-200">Clients</strong> — VIP vs Standard tier, mapped to the SLA matrix.</li>
+          <li>• <strong class="text-fog-200">Cases</strong> — priority (P1/P2/P3), skill needed, and SLA remaining consistent with the tier table.</li>
+          <li>• <strong class="text-fog-200">Escalation paths</strong> — {ESCALATION_CHAIN.join(' → ')}, with defined triggers and mandatory-report flags.</li>
+          <li>• <strong class="text-fog-200">Decisions & scoring dimensions</strong> — each option carries a per-dimension score.</li>
+        </ul>
+      </section>
+
+      <!-- KPI authenticity -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100">
+          <span class="font-mono text-sky">4b.</span> Ops authenticity
+        </h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          The KPIs use industry-standard definitions — no invented metrics. An ops manager recognizes
+          these in a second:
+        </p>
+        <div class="mt-3 overflow-hidden rounded-lg border border-line">
+          <table class="w-full text-left text-[13px]">
+            <thead class="bg-ink-800 text-fog-400">
+              <tr><th class="px-3 py-2">KPI</th><th class="px-3 py-2">Definition</th></tr>
+            </thead>
+            <tbody class="divide-y divide-line">
+              {
+                KPI_DEFS.map((k) => (
+                  <tr class="bg-ink-900/40">
+                    <td class="px-3 py-2 font-semibold text-fog-200">{k.label}</td>
+                    <td class="px-3 py-2 text-fog-400">{k.definition}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. Scenario Engine -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">5.</span> Scenario Engine</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          A step-based state machine (briefing → staffing → escalation → communication → recovery →
+          report → result) that reproduces the three things that make ops hard: time pressure (live SLA
+          clocks), incomplete information, and irreversible decisions (locked-in steps can’t be edited).
+          The Command Center’s KPIs move causally with each call via a "grip factor" derived from the
+          quality of decisions made so far.
+        </p>
+      </section>
+
+      <!-- 6. Scoring -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">6.</span> Scoring Rubric</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          A deterministic weighted rubric — the same input always yields the same score, so it’s
+          defensible in an interview. Weights:
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {
+            DIMENSIONS.map((d) => (
+              <span class="rounded-full border border-line bg-ink-900/60 px-3 py-1 text-[13px] text-fog-300">
+                {d.label} · {d.weight}%
+              </span>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- 7. AI Design -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">7.</span> AI Design</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          AI is an assistant, not the decision-maker. The optional review (DeepSeek via a Cloudflare
+          Pages Function, JSON output mode) only comments on the written report; the deterministic engine
+          remains the single source of truth for the score. If the API key is absent or the call fails,
+          a local fallback review is returned — the demo never breaks in front of a recruiter, and cost
+          stays at zero by default.
+        </p>
+      </section>
+
+      <!-- 8. Edge Cases -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">8.</span> Edge Cases</h2>
+        <ul class="mt-2 space-y-1.5 text-sm text-fog-300">
+          <li>• Session recovery — progress persists to localStorage and restores on refresh.</li>
+          <li>• AI failure fallback — local review when the API is unavailable.</li>
+          <li>• Invalid / partial state — guarded loads, can’t commit a step without a choice.</li>
+          <li>• Mobile layout — Command Center and flow stack responsively.</li>
+          <li>• No-login recruiter mode — link to crisis in one click, no email wall.</li>
+          <li>• Accessibility — keyboard nav, focus rings, ARIA labels, reduced-motion support.</li>
+        </ul>
+      </section>
+
+      <!-- 9. Result -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">9.</span> Result</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          A shareable, playable proof of job-ready operational judgment that a recruiter can experience
+          in three minutes — and a transparent commentary that turns each decision into interview-ready
+          STAR answers.
+        </p>
+      </section>
+
+      <!-- STAR mapping note (§19) -->
+      <section class="rounded-xl border border-line bg-ink-850/70 p-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-fog-500">
+          Interview note (STAR mapping)
+        </h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          Each decision in the
+          <a href="/how-id-handle-it" class="text-sky underline">Architect's Commentary</a>
+          is pre-written as a Situation / Task / Action / Result answer — including "what I traded off" —
+          so a question like "how do you set priorities under pressure?" can be answered by opening the
+          demo and walking through a real call.
+        </p>
+      </section>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-2">
+      <a href="/demo/opsleader" class="rounded-lg bg-sky px-4 py-3 text-sm font-semibold text-ink-950 hover:opacity-90">
+        Play the crisis →
+      </a>
+      <a href="/resume" class="rounded-lg border border-line bg-ink-850 px-4 py-3 text-sm font-semibold text-fog-200 hover:border-fog-600">
+        Resume bridge
+      </a>
+    </div>
+  </div>
+</Base>

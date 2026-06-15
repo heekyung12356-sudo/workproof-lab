@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import { IDENTITY } from '../utils/constants';
+
+const enBullets = [
+  'Built WorkProof Lab, a realistic operations leadership simulation designed to demonstrate job-ready decision-making for remote team lead and operations manager roles.',
+  'Designed seeded operational datasets including team capacity, VIP client cases, SLA deadlines, escalation paths, quality risks, staffing constraints, and recovery plans.',
+  'Implemented a scenario engine that simulates staffing shortages, SLA breach risk, customer escalation, junior agent mistakes, and executive reporting pressure.',
+  'Created a deterministic leadership scoring system across prioritization, staffing judgment, customer communication, escalation accuracy, documentation, and recovery planning.',
+  'Integrated an AI-assisted review architecture with local fallback to keep the demo reliable, cost-controlled, and recruiter-friendly.',
+  'Deployed on Cloudflare Pages with a Workers-based serverless API for zero-cost hosting and global CDN delivery.',
+];
+
+const koBullets = [
+  '원격 팀리더·오퍼레이션 매니저 직무 역량을 증명하기 위한 실무형 운영 리더십 시뮬레이션 WorkProof Lab을 설계 및 구현했습니다.',
+  '팀원 가용성, VIP 고객 케이스, SLA 마감, 에스컬레이션 경로, 품질 리스크, 인력 부족, 복구 계획 등 실제 운영 조직에 가까운 시드 데이터를 설계했습니다.',
+  '결근, SLA 위반 위험, 고객 에스컬레이션, 주니어 직원 실수, 상위 관리자 보고 압박을 재현하는 시나리오 엔진을 구현했습니다.',
+  '우선순위 판단, 인력 배치, 고객 커뮤니케이션, 에스컬레이션 정확도, 문서화, 복구 계획을 기준으로 리더십 판단력을 점수화하는 평가 시스템을 만들었습니다.',
+  'AI 리뷰 기능은 보조 도구로 설계하고, API 실패 시 로컬 평가기로 fallback되도록 구성해 안정적인 채용 시연이 가능하게 했습니다.',
+  'Cloudflare Pages + Workers 기반으로 배포하여 글로벌 CDN과 제로 비용 호스팅을 실현했습니다.',
+];
+
+const cold = `Hi [Name],
+
+My formal title may not read "operations manager" yet — so instead of telling you I can do the job, I built something you can test in 3 minutes.
+
+I designed and built a realistic ops-crisis simulation: staffing shortage, VIP SLA risk, customer escalation, a junior agent's data mistake, and executive reporting pressure.
+
+You can run the crisis yourself (no login), then see exactly how I'd handle each call and what I'd trade off:
+${IDENTITY.liveUrl}
+
+It's built on real ops mechanics — SLA tiers, escalation matrix, CSAT/AHT/FCR — so it should feel familiar to your team. Happy to walk through the design decisions live.
+
+Best,
+${IDENTITY.fullName}`;
+---
+
+<Base
+  title="Resume Bridge"
+  description="Copy-ready résumé bullets (EN/KO), a recruiter cold message, and live links for WorkProof Lab."
+>
+  <div class="mx-auto max-w-3xl px-4 py-10">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">Resume bridge</p>
+      <h1 class="mt-1 text-3xl font-bold text-fog-100">Put this on your résumé & in outreach</h1>
+      <p class="mt-2 text-sm text-fog-400">
+        Copy-ready text. Click any block to copy it.
+      </p>
+    </header>
+
+    <!-- Links -->
+    <section class="mb-8 rounded-xl border border-line bg-ink-850/70 p-4">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-fog-500">Links</h2>
+      <ul class="mt-2 space-y-1 text-sm">
+        <li>Live demo: <a class="text-sky underline" href={IDENTITY.liveUrl}>{IDENTITY.liveUrl}</a></li>
+        <li>GitHub: <a class="text-sky underline" href={IDENTITY.github}>{IDENTITY.github}</a></li>
+        <li>LinkedIn: <a class="text-sky underline" href={IDENTITY.linkedin}>{IDENTITY.linkedin}</a></li>
+        <li>Email: <a class="text-sky underline" href={`mailto:${IDENTITY.email}`}>{IDENTITY.email}</a></li>
+      </ul>
+      <p class="mt-3 rounded-lg border border-amber/30 bg-amber/5 px-3 py-2 text-[12px] text-amber">
+        Heads up: update name, GitHub, and LinkedIn in <code class="font-mono">src/utils/constants.ts</code>
+        so they appear correctly everywhere.
+      </p>
+    </section>
+
+    <!-- Résumé hook -->
+    <section class="mb-8">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">One-line hook (contact row)</h2>
+      <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-3 text-left text-sm text-fog-200 hover:border-fog-600">
+        Live demo recruiters can play: {IDENTITY.liveUrl} — a realistic ops-crisis simulation I designed and built.
+      </button>
+    </section>
+
+    <!-- EN bullets -->
+    <section class="mb-8">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">Résumé bullets (English)</h2>
+      <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
+        <ul class="space-y-2 text-sm text-fog-300">
+          {enBullets.map((b) => <li>• {b}</li>)}
+        </ul>
+      </button>
+    </section>
+
+    <!-- KO bullets -->
+    <section class="mb-8">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">이력서 문장 (한국어)</h2>
+      <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
+        <ul class="space-y-2 text-sm text-fog-300">
+          {koBullets.map((b) => <li>• {b}</li>)}
+        </ul>
+      </button>
+    </section>
+
+    <!-- Cold message -->
+    <section class="mb-8">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">Recruiter cold message</h2>
+      <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
+        <pre class="whitespace-pre-wrap font-sans text-sm text-fog-300">{cold}</pre>
+      </button>
+    </section>
+
+    <p id="copy-toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-ink-950 opacity-0 transition-opacity">
+      Copied to clipboard
+    </p>
+  </div>
+
+  <script>
+    const toast = document.getElementById('copy-toast');
+    document.querySelectorAll<HTMLElement>('.copyable').forEach((el) => {
+      el.addEventListener('click', async () => {
+        const text = (el.innerText || '').trim();
+        try {
+          await navigator.clipboard.writeText(text);
+          if (toast) {
+            toast.style.opacity = '1';
+            setTimeout(() => (toast.style.opacity = '0'), 1400);
+          }
+        } catch {
+          /* clipboard blocked — ignore */
+        }
+      });
+    });
+  </script>
+</Base>

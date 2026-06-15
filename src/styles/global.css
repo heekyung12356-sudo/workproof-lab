@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   WorkProof Lab — design tokens
+   Minimal "operations dashboard" aesthetic. Dark, calm, instrument-panel feel.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-ink-950: #060911;
+  --color-ink-900: #0b1220;
+  --color-ink-850: #0f1726;
+  --color-ink-800: #131c2e;
+  --color-ink-700: #1c2740;
+  --color-ink-600: #2a3651;
+  --color-line: #1e2a44;
+
+  --color-fog-100: #f8fafc;
+  --color-fog-300: #cbd5e1;
+  --color-fog-400: #94a3b8;
+  --color-fog-500: #64748b;
+
+  --color-sky: #38bdf8;
+  --color-mint: #34d399;
+  --color-iris: #a78bfa;
+  --color-amber: #fbbf24;
+  --color-rose: #fb7185;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic",
+    sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo,
+    Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-ink-950);
+  color: var(--color-fog-300);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/* Accessible focus ring everywhere (WCAG 2.1 AA — keyboard nav, §20). */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-sky);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Subtle grid backdrop used on hero / command center. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Screen-reader-only utility. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Print styles for Architect's Commentary PDF export (§10b) ---- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0b1220 !important;
+  }
+  .print-card {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #0b1220 !important;
+    break-inside: avoid;
+  }
+  .print-muted {
+    color: #475569 !important;
+  }
+  a {
+    color: #0b1220 !important;
+    text-decoration: underline;
+  }
+}

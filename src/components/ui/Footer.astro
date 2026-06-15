@@ -1,0 +1,15 @@
+---
+import { IDENTITY, SITE } from '../../utils/constants';
+---
+
+<footer class="border-t border-line bg-ink-950">
+  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-sm text-fog-500 sm:flex-row">
+    <p>© {new Date().getFullYear()} {IDENTITY.fullName} · {SITE.name}</p>
+    <nav class="flex items-center gap-4">
+      <a href={IDENTITY.github} class="hover:text-fog-200" rel="noopener" target="_blank">GitHub</a>
+      <a href={IDENTITY.linkedin} class="hover:text-fog-200" rel="noopener" target="_blank">LinkedIn</a>
+      <a href={`mailto:${IDENTITY.email}`} class="hover:text-fog-200">Email</a>
+    </nav>
+    <p class="text-fog-600">Built with Astro on Cloudflare Pages</p>
+  </div>
+</footer>

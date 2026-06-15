@@ -1,0 +1,10 @@
+# Cloudflare Pages configuration.
+# Functions in the root /functions directory are deployed automatically alongside
+# the static /dist output — /api/ai-review maps to functions/api/ai-review.ts.
+name = "workproof-lab"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "./dist"
+
+# Set the DeepSeek key as a secret/env var in the Cloudflare dashboard
+# (Pages → Settings → Environment variables → DEEPSEEK_API_KEY).
+# When absent, the AI route gracefully returns a local fallback review.

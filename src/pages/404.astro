@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="404 — Off the runbook" description="That page isn't in the runbook.">
+  <div class="mx-auto flex max-w-xl flex-col items-center px-4 py-28 text-center">
+    <div class="font-mono text-6xl font-bold text-sky">404</div>
+    <h1 class="mt-4 text-2xl font-bold text-fog-100">This page is off the runbook.</h1>
+    <p class="mt-2 text-sm text-fog-400">
+      No escalation path leads here. Let's route you back to something that works under pressure.
+    </p>
+    <div class="mt-6 flex flex-wrap justify-center gap-2">
+      <a href="/demo/opsleader" class="rounded-lg bg-sky px-4 py-2.5 text-sm font-semibold text-ink-950 hover:opacity-90">
+        Play the crisis
+      </a>
+      <a href="/" class="rounded-lg border border-line bg-ink-850 px-4 py-2.5 text-sm font-semibold text-fog-200 hover:border-fog-600">
+        Back home
+      </a>
+    </div>
+  </div>
+</Base>
