@@ -20,11 +20,11 @@ export const IDENTITY = {
 
 export const SITE = {
   name: 'WorkProof Lab',
-  demoName: 'OpsLeader WorkProof Lab',
-  subtitle: 'A realistic operations leadership simulation for role-ready candidates.',
-  subtitleKo: '팀리더·오퍼레이션 매니저 실무 위기 대응 시뮬레이션',
+  demoName: 'WorkProof Lab',
+  subtitle: 'A tailored, playable simulation of the exact role — one per job posting.',
+  subtitleKo: '지원하는 직무 그대로를 시뮬레이션으로 — 공고당 하나씩',
   description:
-    'A realistic operations leadership simulation you can play in 3 minutes — staffing shortage, VIP SLA risk, customer escalation, a junior agent’s data mistake, and executive reporting pressure. Built to prove role-ready operational judgment.',
+    'WorkProof Lab turns a specific job description into a working, playable simulation of that exact role. Recruiters can do the real task in 3 minutes and see job-ready judgment — proof, not claims.',
 } as const;
 
 /** 채용 타깃 직무 (랜딩 Trust Signals 뱃지) — 지시서 §0 */

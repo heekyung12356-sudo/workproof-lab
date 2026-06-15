@@ -1,212 +1,114 @@
 ---
 import Base from '../layouts/Base.astro';
-import { DIMENSIONS } from '../data/scoring';
-import { KPI_DEFS, ESCALATION_CHAIN } from '../data/ops-spec';
-import { GLOSSARY, CONSOLE } from '../data/brand';
-import { SCENARIOS } from '../data/scenarios';
-
-const sections = [
-  {
-    n: 1,
-    title: 'Problem',
-    body: 'Companies want experienced operations leaders, but candidates rarely get access to real operational scenarios before being hired — and a résumé that reads "customer support" gets filtered out before anyone tests the judgment behind it. The gap isn’t ability; it’s a way to prove ability.',
-  },
-  {
-    n: 2,
-    title: 'Solution',
-    body: 'A realistic, no-login simulation that tests the calls an ops lead actually makes — prioritization, staffing, SLA judgment, escalation, customer communication, and recovery planning — and then exposes my reasoning and trade-offs transparently, so the proof is the thinking, not a self-awarded grade.',
-  },
-  {
-    n: 3,
-    title: 'System Design',
-    body: `Static-first architecture (Astro, zero-JS by default) with a single interactive React island — ${CONSOLE.name}, a virtual operations console with a sidebar, top bar, and five views (Command Center, Operations Queue, Team Board, Crisis Room, WorkProof Report). Seeded data, a step-based scenario engine, a deterministic scoring rubric, dynamic result generation, and an optional AI review that always falls back to local. Deployed on Cloudflare Pages with a Pages Function for the AI route.`,
-  },
-];
+import { COMPANIES } from '../data/companies';
 ---
 
 <Base
-  title="Case Study — How I designed a realistic ops simulation"
-  description="The system design behind WorkProof Lab: data model, scenario state machine, deterministic scoring rubric, AI-with-fallback architecture, and edge-case handling."
+  title="How it’s built — a per-company simulation template"
+  description="The system behind WorkProof Lab: a company-config template that turns any job description into a working role simulation — one deploy, many tailored companies."
 >
   <div class="mx-auto max-w-3xl px-4 py-10">
     <header class="mb-8">
-      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">Case study</p>
-      <h1 class="mt-1 text-3xl font-bold text-fog-100">
-        How I designed a realistic operations leadership simulation
-      </h1>
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">How it’s built</p>
+      <h1 class="mt-1 text-3xl font-bold text-fog-100">One template, a tailored simulation per job posting</h1>
     </header>
 
     <div class="space-y-7">
-      {
-        sections.map((s) => (
-          <section>
-            <h2 class="text-lg font-bold text-fog-100">
-              <span class="font-mono text-sky">{s.n}.</span> {s.title}
-            </h2>
-            <p class="mt-2 text-sm leading-relaxed text-fog-300">{s.body}</p>
-          </section>
-        ))
-      }
-
-      <!-- 4. Data Model -->
       <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">4.</span> Data Model</h2>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">1.</span> Problem</h2>
         <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          Every number on screen is computed from seed data, never decorative. The model:
+          A résumé that reads "customer support" gets filtered out before anyone tests the judgment behind
+          it. And a single generic portfolio doesn’t convince a specific hiring manager — they want to see
+          that you understand <em>their</em> role, not ops in the abstract.
         </p>
-        <ul class="mt-2 space-y-1.5 text-sm text-fog-300">
-          <li>• <strong class="text-fog-200">Team</strong> — role, tenure, a 0–5 skill matrix (billing/technical/de-escalation), languages, timezone, and live status. Available headcount = total − (absent + training).</li>
-          <li>• <strong class="text-fog-200">Clients</strong> — VIP vs Standard tier, mapped to the SLA matrix.</li>
-          <li>• <strong class="text-fog-200">Cases</strong> — priority (P1/P2/P3), skill needed, and SLA remaining consistent with the tier table.</li>
-          <li>• <strong class="text-fog-200">Escalation paths</strong> — {ESCALATION_CHAIN.join(' → ')}, with defined triggers and mandatory-report flags.</li>
-          <li>• <strong class="text-fog-200">Decisions & scoring dimensions</strong> — each option carries a per-dimension score.</li>
-        </ul>
       </section>
 
-      <!-- KPI authenticity -->
       <section>
-        <h2 class="text-lg font-bold text-fog-100">
-          <span class="font-mono text-sky">4b.</span> Ops authenticity
-        </h2>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">2.</span> Solution</h2>
         <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          The KPIs use industry-standard definitions — no invented metrics. An ops manager recognizes
-          these in a second:
-        </p>
-        <div class="mt-3 overflow-hidden rounded-lg border border-line">
-          <table class="w-full text-left text-[13px]">
-            <thead class="bg-ink-800 text-fog-400">
-              <tr><th class="px-3 py-2">KPI</th><th class="px-3 py-2">Definition</th></tr>
-            </thead>
-            <tbody class="divide-y divide-line">
-              {
-                KPI_DEFS.map((k) => (
-                  <tr class="bg-ink-900/40">
-                    <td class="px-3 py-2 font-semibold text-fog-200">{k.label}</td>
-                    <td class="px-3 py-2 text-fog-400">{k.definition}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Brand / no-clone -->
-      <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">4c.</span> Own brand, not a clone</h2>
-        <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          Public tools (Zendesk, Salesforce, Jira, Freshdesk…) share a common work structure, but their
-          names, UI, and copy are protected IP. So {CONSOLE.name} abstracts the structure and renames every
-          concept — no logos, layouts, or wording are copied:
-        </p>
-        <div class="mt-3 overflow-hidden rounded-lg border border-line">
-          <table class="w-full text-left text-[13px]">
-            <thead class="bg-ink-800 text-fog-400"><tr><th class="px-3 py-2">Generic concept</th><th class="px-3 py-2">Our term</th></tr></thead>
-            <tbody class="divide-y divide-line">
-              {GLOSSARY.map((g) => (
-                <tr class="bg-ink-900/40"><td class="px-3 py-2 text-fog-400">{g.generic}</td><td class="px-3 py-2 font-semibold text-fog-200">{g.ours}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 5. Scenario Engine -->
-      <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">5.</span> Scenario Engine</h2>
-        <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          A step-based state machine that reproduces the three things that make ops hard: time pressure
-          (live SLA clocks), incomplete information (Rule Assist <em>suggests</em>, never decides), and
-          irreversible decisions (locked-in steps can’t be edited). Every important call also requires a
-          written <em>why</em>, and a dedicated step makes you route the <strong>reporting chain</strong> —
-          who to escalate to — scored against the correct roles. Four crises ship today:
+          For each target job, a working simulation of <em>that exact role</em>, built from the posting:
+          its requirements are mapped to a real task the recruiter can play, with a competency report and
+          transparent reasoning at the end. Currently live:
         </p>
         <ul class="mt-2 space-y-1 text-sm text-fog-300">
-          {SCENARIOS.map((s) => (
-            <li>• <span class="font-mono text-[11px] text-fog-600">{s.code}</span> <strong class="text-fog-200">{s.name}</strong> — {s.tagline}</li>
+          {COMPANIES.map((c) => (
+            <li>• <strong class="text-fog-200">{c.name}</strong> — {c.roleTitle}</li>
           ))}
         </ul>
-        <p class="mt-2 text-sm leading-relaxed text-fog-400">
-          The Command Center’s KPIs move causally with each call via a "grip factor" derived from the
-          quality of decisions made so far — they are never static decoration.
-        </p>
       </section>
 
-      <!-- 6. Scoring -->
       <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">6.</span> Scoring Rubric</h2>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">3.</span> System design — config, not copies</h2>
         <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          A deterministic weighted rubric — the same input always yields the same score, so it’s
-          defensible in an interview. Weights:
-        </p>
-        <div class="mt-3 flex flex-wrap gap-2">
-          {
-            DIMENSIONS.map((d) => (
-              <span class="rounded-full border border-line bg-ink-900/60 px-3 py-1 text-[13px] text-fog-300">
-                {d.label} · {d.weight}%
-              </span>
-            ))
-          }
-        </div>
-      </section>
-
-      <!-- 7. AI Design -->
-      <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">7.</span> AI Design</h2>
-        <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          AI is an assistant, not the decision-maker. The optional review (DeepSeek via a Cloudflare
-          Pages Function, JSON output mode) only comments on the written report; the deterministic engine
-          remains the single source of truth for the score. If the API key is absent or the call fails,
-          a local fallback review is returned — the demo never breaks in front of a recruiter, and cost
-          stays at zero by default.
+          The engine, console UI, scoring, and report are shared. Each company is a single config file that
+          declares its identity, accent, KPIs, queue, requirements→proof map, role-specific competencies,
+          and a tailored task. <strong>Adding a company = one file + one line.</strong> Everything ships in
+          a single deploy; per-company links (<code class="font-mono text-sky">/apply/&lt;slug&gt;</code>)
+          are focused, so a recruiter only ever sees their own company — never that you’re applying elsewhere.
+          A private control panel lets the candidate toggle which targets are active when presenting.
         </p>
       </section>
 
-      <!-- 8. Edge Cases -->
       <section>
-        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">8.</span> Edge Cases</h2>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">4.</span> Data model</h2>
         <ul class="mt-2 space-y-1.5 text-sm text-fog-300">
-          <li>• Session recovery — progress persists to localStorage and restores on refresh.</li>
-          <li>• AI failure fallback — local review when the API is unavailable.</li>
-          <li>• Invalid / partial state — guarded loads, can’t commit a step without a choice.</li>
-          <li>• Mobile layout — Command Center and flow stack responsively.</li>
-          <li>• No-login recruiter mode — link to crisis in one click, no email wall.</li>
-          <li>• Accessibility — keyboard nav, focus rings, ARIA labels, reduced-motion support.</li>
+          <li>• <strong class="text-fog-200">Company</strong> — identity, accent theme, JD-derived requirements→proof map, KPIs, a domain work-queue, and a side panel.</li>
+          <li>• <strong class="text-fog-200">Dimensions</strong> — role-specific weighted competencies (e.g. NETGEAR: Troubleshooting Methodology; tQCS: Tech→Business Translation).</li>
+          <li>• <strong class="text-fog-200">Scenario → Steps</strong> — choice / routing / report steps, each with options carrying per-dimension scores and a model "how I’d handle it" with trade-offs.</li>
         </ul>
       </section>
 
-      <!-- 9. Result -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">5.</span> Scenario engine</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          A step-based state machine reproduces what makes the job hard: time pressure (live clocks),
+          incomplete information (an "Assist" that <em>suggests</em> but never decides), and irreversible,
+          locked-in calls. Every important decision requires a written <em>why</em> — that reasoning is the
+          real evidence — and routing steps make you choose the correct people to involve, scored against
+          the right set.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">6.</span> Scoring</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          A deterministic, weighted rubric over each role’s own competencies — same input, same score, so
+          it’s defensible in an interview. The score grades the <em>player</em> (the recruiter), proving
+          the task is realistic; the candidate’s evidence is the recorded reasoning and trade-offs.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">7.</span> AI design</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          AI is an assistant, not the decision-maker. An optional review (DeepSeek via a Cloudflare Pages
+          Function) comments only on the written deliverable; the deterministic engine stays the source of
+          truth, and if the API is unavailable a local fallback keeps the demo working in front of a recruiter.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">8.</span> Edge cases</h2>
+        <ul class="mt-2 space-y-1.5 text-sm text-fog-300">
+          <li>• Per-company session recovery (localStorage, isolated by slug).</li>
+          <li>• AI failure → local fallback review.</li>
+          <li>• No-login; focused per-company links that don’t leak other applications.</li>
+          <li>• Accessibility: keyboard nav, focus rings, reduced-motion; responsive on mobile.</li>
+        </ul>
+      </section>
+
       <section>
         <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">9.</span> Result</h2>
         <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          A shareable, playable proof of job-ready operational judgment that a recruiter can experience
-          in three minutes — and a transparent commentary that turns each decision into interview-ready
-          STAR answers.
-        </p>
-      </section>
-
-      <!-- STAR mapping note (§19) -->
-      <section class="rounded-xl border border-line bg-ink-850/70 p-4">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-fog-500">
-          Interview note (STAR mapping)
-        </h2>
-        <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          Each decision in the
-          <a href="/how-id-handle-it" class="text-sky underline">Architect's Commentary</a>
-          is pre-written as a Situation / Task / Action / Result answer — including "what I traded off" —
-          so a question like "how do you set priorities under pressure?" can be answered by opening the
-          demo and walking through a real call.
+          A scalable way to walk into every application having already "done the job" — and to hand the
+          recruiter a 3-minute proof tailored to their exact posting.
         </p>
       </section>
     </div>
 
     <div class="mt-10 flex flex-wrap gap-2">
-      <a href="/demo/opsleader" class="rounded-lg bg-sky px-4 py-3 text-sm font-semibold text-ink-950 hover:opacity-90">
-        Play the crisis →
-      </a>
-      <a href="/resume" class="rounded-lg border border-line bg-ink-850 px-4 py-3 text-sm font-semibold text-fog-200 hover:border-fog-600">
-        Resume bridge
-      </a>
+      <a href="/" class="rounded-lg bg-sky px-4 py-3 text-sm font-semibold text-ink-950 hover:opacity-90">Back to the control panel →</a>
+      <a href="/resume" class="rounded-lg border border-line bg-ink-850 px-4 py-3 text-sm font-semibold text-fog-200 hover:border-fog-600">Resume</a>
     </div>
   </div>
 </Base>

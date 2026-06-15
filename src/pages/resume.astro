@@ -1,123 +1,92 @@
 ---
 import Base from '../layouts/Base.astro';
 import { IDENTITY } from '../utils/constants';
+import { COMPANIES } from '../data/companies';
 
 const enBullets = [
-  'Built WorkProof Lab, a realistic operations leadership simulation designed to demonstrate job-ready decision-making for remote team lead and operations manager roles.',
-  'Designed seeded operational datasets including team capacity, VIP client cases, SLA deadlines, escalation paths, quality risks, staffing constraints, and recovery plans.',
-  'Implemented a scenario engine that simulates staffing shortages, SLA breach risk, customer escalation, junior agent mistakes, and executive reporting pressure.',
-  'Created a deterministic leadership scoring system across prioritization, staffing judgment, customer communication, escalation accuracy, documentation, and recovery planning.',
-  'Integrated an AI-assisted review architecture with local fallback to keep the demo reliable, cost-controlled, and recruiter-friendly.',
-  'Deployed on Cloudflare Pages with a Workers-based serverless API for zero-cost hosting and global CDN delivery.',
+  'Built WorkProof Lab, a job-targeted simulation platform that turns a specific job description into a working, playable simulation of that exact role — so recruiters can see job-ready judgment before an interview.',
+  'Designed a config-driven template: each target company is a single data file (requirements→proof map, role-specific competencies, KPIs, a real task) rendered by a shared engine — one deploy serves many tailored companies.',
+  'Implemented a step-based scenario engine (triage, structured decisions, escalation/stakeholder routing, written deliverable) that records the reasoning behind every call.',
+  'Created a deterministic, weighted competency rubric per role, with a transparent "how I’d handle it" comparison instead of a self-awarded grade.',
+  'Integrated an AI-assisted review with local fallback to keep the demo reliable and cost-controlled; deployed on Cloudflare Pages + Workers for zero-cost global hosting.',
 ];
 
 const koBullets = [
-  '원격 팀리더·오퍼레이션 매니저 직무 역량을 증명하기 위한 실무형 운영 리더십 시뮬레이션 WorkProof Lab을 설계 및 구현했습니다.',
-  '팀원 가용성, VIP 고객 케이스, SLA 마감, 에스컬레이션 경로, 품질 리스크, 인력 부족, 복구 계획 등 실제 운영 조직에 가까운 시드 데이터를 설계했습니다.',
-  '결근, SLA 위반 위험, 고객 에스컬레이션, 주니어 직원 실수, 상위 관리자 보고 압박을 재현하는 시나리오 엔진을 구현했습니다.',
-  '우선순위 판단, 인력 배치, 고객 커뮤니케이션, 에스컬레이션 정확도, 문서화, 복구 계획을 기준으로 리더십 판단력을 점수화하는 평가 시스템을 만들었습니다.',
-  'AI 리뷰 기능은 보조 도구로 설계하고, API 실패 시 로컬 평가기로 fallback되도록 구성해 안정적인 채용 시연이 가능하게 했습니다.',
-  'Cloudflare Pages + Workers 기반으로 배포하여 글로벌 CDN과 제로 비용 호스팅을 실현했습니다.',
+  '특정 채용 공고(JD)를 그 직무를 실제로 수행해보는 작동형 시뮬레이션으로 바꿔주는 직무 맞춤 플랫폼 WorkProof Lab을 설계·구현했습니다. 채용담당자가 면접 전에 실무 판단력을 직접 확인할 수 있습니다.',
+  '설정(config) 기반 템플릿을 설계했습니다 — 각 지원 회사가 데이터 파일 하나(요구사항→증명 매핑, 직무별 역량, KPI, 실제 과제)이고 공용 엔진이 렌더링하여, 한 번의 배포로 여러 맞춤 회사를 제공합니다.',
+  '분류, 구조적 의사결정, 에스컬레이션/이해관계자 라우팅, 산출물 작성으로 이어지는 단계형 시나리오 엔진을 구현했고, 모든 판단의 근거를 기록하게 했습니다.',
+  '직무별 결정론적 가중 역량 루브릭을 만들고, 자기 점수 자랑 대신 "내가 어떻게 처리했을지" 투명 비교를 제공했습니다.',
+  'AI 리뷰는 보조로 설계하고 로컬 폴백을 두어 안정적·저비용 시연이 가능하게 했으며, Cloudflare Pages + Workers로 제로 비용 글로벌 배포했습니다.',
 ];
 
 const cold = `Hi [Name],
 
-My formal title may not read "operations manager" yet — so instead of telling you I can do the job, I built something you can test in 3 minutes.
+My résumé may not yet read "[role]" — so instead of telling you I can do the job, I built a 3-minute simulation of it.
 
-I designed and built a realistic ops-crisis simulation: staffing shortage, VIP SLA risk, customer escalation, a junior agent's data mistake, and executive reporting pressure.
+I read your posting and turned its requirements into a working task for the role: you can play it (no login), then see a competency report and how I'd handle each call.
 
-You can run the crisis yourself (no login), then see exactly how I'd handle each call and what I'd trade off:
-${IDENTITY.liveUrl}
+${IDENTITY.liveUrl}/apply/[company]
 
-It's built on real ops mechanics — SLA tiers, escalation matrix, CSAT/AHT/FCR — so it should feel familiar to your team. Happy to walk through the design decisions live.
+Happy to walk through any of the decisions live.
 
 Best,
 ${IDENTITY.fullName}`;
 ---
 
-<Base
-  title="Resume Bridge"
-  description="Copy-ready résumé bullets (EN/KO), a recruiter cold message, and live links for WorkProof Lab."
->
+<Base title="Resume Bridge" description="Copy-ready résumé bullets (EN/KO), a recruiter message, and per-company demo links.">
   <div class="mx-auto max-w-3xl px-4 py-10">
     <header class="mb-8">
       <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">Resume bridge</p>
       <h1 class="mt-1 text-3xl font-bold text-fog-100">Put this on your résumé & in outreach</h1>
-      <p class="mt-2 text-sm text-fog-400">
-        Copy-ready text. Click any block to copy it.
-      </p>
+      <p class="mt-2 text-sm text-fog-400">Click any block to copy it.</p>
     </header>
 
-    <!-- Links -->
     <section class="mb-8 rounded-xl border border-line bg-ink-850/70 p-4">
       <h2 class="text-sm font-semibold uppercase tracking-wider text-fog-500">Links</h2>
       <ul class="mt-2 space-y-1 text-sm">
-        <li>Live demo: <a class="text-sky underline" href={IDENTITY.liveUrl}>{IDENTITY.liveUrl}</a></li>
-        <li>GitHub: <a class="text-sky underline" href={IDENTITY.github}>{IDENTITY.github}</a></li>
-        <li>LinkedIn: <a class="text-sky underline" href={IDENTITY.linkedin}>{IDENTITY.linkedin}</a></li>
-        <li>Email: <a class="text-sky underline" href={`mailto:${IDENTITY.email}`}>{IDENTITY.email}</a></li>
+        <li>Hub: <a class="text-sky underline" href={IDENTITY.liveUrl}>{IDENTITY.liveUrl}</a></li>
+        {COMPANIES.map((c) => (
+          <li>{c.name} ({c.roleTitle}): <a class="text-sky underline" href={`/apply/${c.slug}`}>{IDENTITY.liveUrl}/apply/{c.slug}</a></li>
+        ))}
+        <li>GitHub: <a class="text-sky underline" href={IDENTITY.github}>{IDENTITY.github}</a> · Email: <a class="text-sky underline" href={`mailto:${IDENTITY.email}`}>{IDENTITY.email}</a></li>
       </ul>
       <p class="mt-3 rounded-lg border border-amber/30 bg-amber/5 px-3 py-2 text-[12px] text-amber">
-        Heads up: update name, GitHub, and LinkedIn in <code class="font-mono">src/utils/constants.ts</code>
-        so they appear correctly everywhere.
+        Update name, GitHub, and LinkedIn in <code class="font-mono">src/utils/constants.ts</code>.
       </p>
     </section>
 
-    <!-- Résumé hook -->
-    <section class="mb-8">
-      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">One-line hook (contact row)</h2>
-      <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-3 text-left text-sm text-fog-200 hover:border-fog-600">
-        Live demo recruiters can play: {IDENTITY.liveUrl} — a realistic ops-crisis simulation I designed and built.
-      </button>
-    </section>
-
-    <!-- EN bullets -->
     <section class="mb-8">
       <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">Résumé bullets (English)</h2>
       <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
-        <ul class="space-y-2 text-sm text-fog-300">
-          {enBullets.map((b) => <li>• {b}</li>)}
-        </ul>
+        <ul class="space-y-2 text-sm text-fog-300">{enBullets.map((b) => <li>• {b}</li>)}</ul>
       </button>
     </section>
 
-    <!-- KO bullets -->
     <section class="mb-8">
       <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">이력서 문장 (한국어)</h2>
       <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
-        <ul class="space-y-2 text-sm text-fog-300">
-          {koBullets.map((b) => <li>• {b}</li>)}
-        </ul>
+        <ul class="space-y-2 text-sm text-fog-300">{koBullets.map((b) => <li>• {b}</li>)}</ul>
       </button>
     </section>
 
-    <!-- Cold message -->
     <section class="mb-8">
-      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">Recruiter cold message</h2>
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-fog-500">Recruiter message (fill in [role] / [company])</h2>
       <button class="copyable w-full rounded-lg border border-line bg-ink-900/50 p-4 text-left hover:border-fog-600">
         <pre class="whitespace-pre-wrap font-sans text-sm text-fog-300">{cold}</pre>
       </button>
     </section>
 
-    <p id="copy-toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-ink-950 opacity-0 transition-opacity">
-      Copied to clipboard
-    </p>
+    <p id="copy-toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-ink-950 opacity-0 transition-opacity">Copied to clipboard</p>
   </div>
 
   <script>
     const toast = document.getElementById('copy-toast');
     document.querySelectorAll<HTMLElement>('.copyable').forEach((el) => {
       el.addEventListener('click', async () => {
-        const text = (el.innerText || '').trim();
         try {
-          await navigator.clipboard.writeText(text);
-          if (toast) {
-            toast.style.opacity = '1';
-            setTimeout(() => (toast.style.opacity = '0'), 1400);
-          }
-        } catch {
-          /* clipboard blocked — ignore */
-        }
+          await navigator.clipboard.writeText((el.innerText || '').trim());
+          if (toast) { toast.style.opacity = '1'; setTimeout(() => (toast.style.opacity = '0'), 1400); }
+        } catch { /* ignore */ }
       });
     });
   </script>

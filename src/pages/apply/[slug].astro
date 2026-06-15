@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkConsole from '../../components/work/WorkConsole.tsx';
+import { COMPANIES, getCompany } from '../../data/companies';
+
+export function getStaticPaths() {
+  return COMPANIES.map((c) => ({ params: { slug: c.slug } }));
+}
+
+const { slug } = Astro.params;
+const company = getCompany(slug!);
+if (!company) return Astro.redirect('/404');
+---
+
+<Base
+  title={`${company.roleTitle} — tailored simulation`}
+  description={`A working simulation of the ${company.roleTitle} role at ${company.name}: do the real task, then see a competency report. Built by a candidate. No login.`}
+>
+  <div class="mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
+    <header class="mb-4">
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">Tailored candidate simulation</p>
+      <h1 class="mt-1 text-2xl font-bold text-fog-100">{company.roleTitle} <span class="text-fog-500">· {company.name}</span></h1>
+      <p class="text-sm text-fog-400">{company.tagline}</p>
+    </header>
+
+    <WorkConsole client:load company={company} />
+
+    <p class="mt-4 text-center text-[11px] text-fog-600">
+      Unofficial candidate demo — not affiliated with {company.name}. All customers, cases, and data are fictional.
+    </p>
+  </div>
+</Base>

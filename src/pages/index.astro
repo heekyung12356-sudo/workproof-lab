@@ -1,166 +1,57 @@
 ---
 import Base from '../layouts/Base.astro';
-import { HERO, CTAS, TARGET_ROLES, SITE } from '../utils/constants';
-import { SCENARIOS } from '../data/scenarios';
+import PresenterPanel from '../components/work/PresenterPanel.tsx';
+import { COMPANIES } from '../data/companies';
+import { IDENTITY, SITE } from '../utils/constants';
 
-const steps = [
-  { n: '01', title: 'Run the console', body: 'Browse CommandDesk like a real internal ops tool — Command Center, Operations Queue, Team Capacity Board. Every number is computed from seeded data.' },
-  { n: '02', title: 'Survive the crisis', body: 'Enter the Crisis Room. Reassign people, escalate, communicate, route the reporting chain, recover — and record why on every call.' },
-  { n: '03', title: 'See how I’d handle it', body: 'Get a WorkProof Report scored across leadership dimensions, then read my reasoning and trade-offs for each decision.' },
-];
+const lite = COMPANIES.map((c) => ({ slug: c.slug, name: c.name, roleTitle: c.roleTitle, tagline: c.tagline, accent: c.accent }));
 ---
 
 <Base>
-  <!-- HERO -->
-  <section class="relative overflow-hidden border-b border-line bg-grid">
-    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-950/40 to-ink-950"></div>
-    <div class="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:items-center">
-      <div>
-        <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-ink-900/60 px-3 py-1 text-xs font-medium text-fog-400">
-          <span class="h-1.5 w-1.5 rounded-full bg-mint"></span>
-          {SITE.demoName}
-        </p>
-        <h1 class="text-4xl font-extrabold leading-[1.05] text-fog-100 sm:text-5xl">
-          {HERO.lines.map((l) => <span class="block">{l}</span>)}
-        </h1>
-        <p class="mt-5 max-w-xl text-base leading-relaxed text-fog-300">{HERO.sub}</p>
-
-        <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a href={CTAS.play.href} class="rounded-xl bg-sky px-5 py-3.5 text-center font-semibold text-ink-950 shadow-lg shadow-sky/20 transition hover:opacity-90">
-            {CTAS.play.label}
-            <span class="block text-[11px] font-normal text-ink-900/70">{CTAS.play.note}</span>
-          </a>
-          <a href={CTAS.commentary.href} class="rounded-xl border border-line bg-ink-850 px-5 py-3.5 text-center font-semibold text-fog-100 transition hover:border-fog-600">
-            {CTAS.commentary.label}
-            <span class="block text-[11px] font-normal text-fog-500">{CTAS.commentary.note}</span>
-          </a>
-        </div>
-        <p class="mt-4 text-xs text-fog-600">No sign-up, no email wall. Link → live ops console in one click.</p>
-      </div>
-
-      <!-- Static visual preview of the CommandDesk console -->
-      <div class="rounded-2xl border border-line bg-ink-900 shadow-2xl shadow-black/50">
-        <div class="flex items-center justify-between border-b border-line bg-ink-850 px-3 py-2">
-          <div class="flex items-center gap-2">
-            <span class="grid h-6 w-6 place-items-center rounded bg-sky/15 text-[11px] font-bold text-sky">C</span>
-            <span class="text-[12px] font-semibold text-fog-100">CommandDesk</span>
-            <span class="hidden rounded-full border border-line px-1.5 py-0.5 text-[10px] text-fog-500 sm:inline">APAC Customer Ops</span>
-          </div>
-          <span class="animate-pulse rounded bg-rose/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-rose">● LIVE</span>
-        </div>
-        <div class="grid grid-cols-[120px_1fr]">
-          <div class="space-y-1 border-r border-line p-2 text-[11px]">
-            {['◳ Command', '☰ Queue', '◑ Team', '⚠ Crisis', '◆ Report'].map((x, i) => (
-              <div class:list={["rounded px-2 py-1", i === 0 ? "bg-ink-800 text-fog-100" : i === 3 ? "text-rose" : "text-fog-500"]}>{x}</div>
-            ))}
-          </div>
-          <div class="space-y-2 p-3">
-            <div class="grid grid-cols-3 gap-2">
-              <div class="rounded-lg border border-rose/30 bg-rose/5 p-2">
-                <div class="text-[9px] uppercase text-rose">SLA risk</div>
-                <div class="font-mono text-sm font-bold text-rose">00:42</div>
-              </div>
-              <div class="rounded-lg border border-line bg-ink-900/50 p-2">
-                <div class="text-[9px] uppercase text-fog-500">Queue</div>
-                <div class="font-mono text-sm font-bold text-fog-100">480</div>
-              </div>
-              <div class="rounded-lg border border-line bg-ink-900/50 p-2">
-                <div class="text-[9px] uppercase text-fog-500">Staff</div>
-                <div class="font-mono text-sm font-bold text-fog-100">8/12</div>
-              </div>
-            </div>
-            <div class="rounded-lg border border-line bg-ink-900/40 p-2">
-              <div class="mb-1 text-[9px] uppercase tracking-wide text-fog-500">Operations Queue</div>
-              <div class="space-y-1 text-[11px]">
-                <div class="flex items-center gap-1.5"><span class="rounded bg-rose/15 px-1 font-mono text-[9px] font-bold text-rose">P1</span><span class="font-semibold text-fog-100">VIP-A Northwind</span><span class="ml-auto font-mono text-fog-500">00:42</span></div>
-                <div class="flex items-center gap-1.5"><span class="rounded bg-rose/15 px-1 font-mono text-[9px] font-bold text-rose">P1</span><span class="font-semibold text-fog-100">VIP-B Helio</span><span class="ml-auto rounded bg-rose/15 px-1 text-[9px] font-bold text-rose">DATA LOSS</span></div>
-                <div class="flex items-center gap-1.5"><span class="rounded bg-ink-700 px-1 font-mono text-[9px] text-fog-400">P3</span><span class="text-fog-300">Brightleaf Retail</span><span class="ml-auto font-mono text-fog-500">300m</span></div>
-              </div>
-            </div>
-            <div class="rounded-lg border border-line bg-ink-900/40 p-2">
-              <div class="mb-1 text-[9px] uppercase tracking-wide text-fog-500">Team Capacity</div>
-              <div class="space-y-1.5 text-[10px]">
-                <div class="flex items-center gap-2"><span class="w-10 text-fog-300">Mina</span><div class="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-700"><div class="h-full bg-rose" style="width:100%"></div></div><span class="text-rose">⚠</span></div>
-                <div class="flex items-center gap-2"><span class="w-10 text-fog-300">Daniel</span><div class="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-700"><div class="h-full bg-mint" style="width:74%"></div></div><span class="text-fog-600">74%</span></div>
-                <div class="flex items-center gap-2"><span class="w-10 text-fog-300">Ravi</span><div class="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-700"><div class="h-full bg-amber" style="width:82%"></div></div><span class="text-iris">new</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- POSITIONING -->
-  <section class="border-b border-line bg-ink-950">
-    <div class="mx-auto max-w-3xl px-4 py-12 text-center">
-      <p class="text-lg font-medium leading-relaxed text-fog-200">
-        Every company uses different tools. But the judgment problems are the same:
-        <span class="text-sky"> prioritization, escalation, staffing, customer communication, and recovery.</span>
+  <section class="border-b border-line bg-grid">
+    <div class="mx-auto max-w-5xl px-4 py-14 sm:py-16">
+      <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-line bg-ink-900/60 px-3 py-1 text-xs font-medium text-fog-400">
+        <span class="h-1.5 w-1.5 rounded-full bg-mint"></span> {SITE.name} · control panel
       </p>
-      <p class="mt-2 text-sm text-fog-500">
-        CommandDesk isn’t a clone of any product — it abstracts the work structure that repeats across
-        every ops tool, so what it tests is judgment, not buttons.
+      <h1 class="text-3xl font-extrabold leading-tight text-fog-100 sm:text-4xl">
+        One demo per job. Built from the actual job description.
+      </h1>
+      <p class="mt-4 max-w-2xl text-base leading-relaxed text-fog-300">
+        Instead of one generic portfolio, each target company gets its own working simulation of
+        <em>that exact role</em> — its requirements mapped to a real task you can play. This page is your
+        private hub: toggle which targets are active, open a simulation, or copy a clean per-company link
+        to send a recruiter (they only ever see their own company).
       </p>
     </div>
   </section>
 
-  <!-- TRUST + roles -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid gap-12 lg:grid-cols-2">
-      <div>
-        <h2 class="text-xs font-semibold uppercase tracking-wider text-fog-500">What this proves</h2>
-        <p class="mt-3 text-2xl font-bold text-fog-100">Not a pretty website — an understanding of how operations actually run.</p>
-        <ul class="mt-5 space-y-3 text-sm text-fog-300">
-          <li class="flex gap-2.5"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sky"></span>A working virtual console: live KPIs, an SLA clock, a queue with Rule Assist signals, and a 12-person capacity board — all computed from seeded data.</li>
-          <li class="flex gap-2.5"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sky"></span>Four crises with a real reporting chain — you decide who to escalate to, and record why on every call.</li>
-          <li class="flex gap-2.5"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sky"></span>A deterministic leadership rubric, plus transparent trade-offs instead of a self-awarded grade.</li>
-          <li class="flex gap-2.5"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sky"></span>AI used as a controlled assistant (Rule Assist); the deterministic engine stays the source of truth.</li>
-        </ul>
-      </div>
-      <div>
-        <h2 class="text-xs font-semibold uppercase tracking-wider text-fog-500">Built for these roles</h2>
-        <div class="mt-3 flex flex-wrap gap-2">
-          {TARGET_ROLES.map((r) => (
-            <span class="rounded-full border border-line bg-ink-900/60 px-3 py-1.5 text-[13px] text-fog-300">{r}</span>
-          ))}
-        </div>
-      </div>
-    </div>
+  <section class="mx-auto max-w-5xl px-4 py-12">
+    <PresenterPanel client:load companies={lite} liveUrl={IDENTITY.liveUrl} />
 
-    <!-- crisis cards -->
-    <div class="mt-16">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-fog-500">Four crises in the Crisis Room</h2>
-      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SCENARIOS.map((s) => (
-          <a href="/demo/opsleader" class="rounded-xl border border-line bg-ink-900/40 p-4 transition-colors hover:border-rose/50">
-            <div class="flex items-center gap-2">
-              <span class="grid h-8 w-8 place-items-center rounded-lg bg-rose/15 text-rose">{s.glyph}</span>
-              <span class="font-mono text-[10px] font-bold text-fog-600">CRISIS {s.code}</span>
-            </div>
-            <div class="mt-2 text-sm font-semibold text-fog-100">{s.name}</div>
-            <div class="mt-1 text-[12px] text-fog-500">{s.tagline}</div>
-          </a>
-        ))}
-      </div>
-    </div>
-
-    <!-- process -->
-    <div class="mt-16">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-fog-500">How it works</h2>
+    <!-- how it works -->
+    <div class="mt-14">
+      <h2 class="text-xs font-semibold uppercase tracking-wider text-fog-500">How each simulation is tailored</h2>
       <div class="mt-4 grid gap-4 md:grid-cols-3">
-        {steps.map((s) => (
-          <div class="rounded-xl border border-line bg-ink-900/40 p-5">
-            <div class="font-mono text-2xl font-bold text-sky">{s.n}</div>
-            <h3 class="mt-2 text-base font-semibold text-fog-100">{s.title}</h3>
-            <p class="mt-1.5 text-sm leading-relaxed text-fog-400">{s.body}</p>
-          </div>
-        ))}
+        <div class="rounded-xl border border-line bg-ink-900/40 p-5">
+          <div class="font-mono text-2xl font-bold text-sky">01</div>
+          <h3 class="mt-2 text-base font-semibold text-fog-100">Read the JD</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-fog-400">Each role’s requirements become a "Requirements → what this proves" map, so a recruiter sees their own words reflected.</p>
+        </div>
+        <div class="rounded-xl border border-line bg-ink-900/40 p-5">
+          <div class="font-mono text-2xl font-bold text-sky">02</div>
+          <h3 class="mt-2 text-base font-semibold text-fog-100">Do the real task</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-fog-400">A working console for that role: the actual work — diagnose, decide, escalate, write the deliverable — with reasoning recorded on every call.</p>
+        </div>
+        <div class="rounded-xl border border-line bg-ink-900/40 p-5">
+          <div class="font-mono text-2xl font-bold text-sky">03</div>
+          <h3 class="mt-2 text-base font-semibold text-fog-100">Prove the judgment</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-fog-400">A WorkProof Report scores the role’s competencies and shows how I’d handle each call — evidence, not claims.</p>
+        </div>
       </div>
     </div>
 
-    <div class="mt-12 flex justify-center">
-      <a href={CTAS.play.href} class="rounded-xl bg-sky px-6 py-3.5 font-semibold text-ink-950 hover:opacity-90">{CTAS.play.label} →</a>
-    </div>
+    <p class="mt-12 text-center text-sm text-fog-500">
+      Built by {IDENTITY.fullName} · <a href="/case-study" class="text-sky underline">how it’s built</a> · <a href="/resume" class="text-sky underline">resume</a>
+    </p>
   </section>
 </Base>

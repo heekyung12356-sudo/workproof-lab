@@ -2,13 +2,10 @@
 import { SITE } from '../../utils/constants';
 const { pathname } = Astro.url;
 const links = [
-  { href: '/demo/opsleader', label: 'Play the crisis' },
-  { href: '/how-id-handle-it', label: "How I'd handle it" },
-  { href: '/case-study', label: 'Case study' },
+  { href: '/case-study', label: 'How it’s built' },
   { href: '/resume', label: 'Resume' },
 ];
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname.startsWith(href);
+const isActive = (href: string) => pathname.startsWith(href);
 ---
 
 <header class="sticky top-0 z-40 border-b border-line bg-ink-950/85 backdrop-blur">
@@ -17,7 +14,7 @@ const isActive = (href: string) =>
       <img src="/favicon.svg" alt="" width="22" height="22" />
       <span>{SITE.name}</span>
     </a>
-    <ul class="hidden items-center gap-1 text-sm md:flex">
+    <ul class="flex items-center gap-1 text-sm">
       {
         links.map((l) => (
           <li>
@@ -26,9 +23,7 @@ const isActive = (href: string) =>
               aria-current={isActive(l.href) ? 'page' : undefined}
               class:list={[
                 'rounded-md px-3 py-1.5 transition-colors',
-                isActive(l.href)
-                  ? 'bg-ink-800 text-fog-100'
-                  : 'text-fog-400 hover:text-fog-100',
+                isActive(l.href) ? 'bg-ink-800 text-fog-100' : 'text-fog-400 hover:text-fog-100',
               ]}
             >
               {l.label}
@@ -37,11 +32,5 @@ const isActive = (href: string) =>
         ))
       }
     </ul>
-    <a
-      href="/demo/opsleader"
-      class="rounded-lg bg-sky px-3 py-1.5 text-sm font-semibold text-ink-950 hover:opacity-90"
-    >
-      Try it →
-    </a>
   </nav>
 </header>

@@ -1,5 +1,9 @@
-/* Pure SVG radar chart — no chart library (지시서 §12 "차트 라이브러리 남발 금지"). */
-import type { DimensionScore } from '../../engines/scoring';
+/* Pure SVG radar chart — no chart library. */
+interface DimensionScore {
+  key: string;
+  label: string;
+  score: number;
+}
 
 interface Props {
   data: DimensionScore[];
