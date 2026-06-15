@@ -55,8 +55,8 @@ export const CTAS = {
   caseStudy: { label: 'Read the System Case Study', href: '/case-study', note: 'How I designed it.' },
 } as const;
 
-/** localStorage 키 — 세션 복구 (지시서 §10 Session) */
-export const STORAGE_KEY = 'workproof.opsleader.v1';
+/** localStorage 키 — 콘솔 세션 복구 */
+export const STORAGE_KEY = 'workproof.console.v1';
 
 /** Cloudflare Web Analytics 토큰. 배포 후 대시보드에서 발급받아 채우면 트래킹 활성화 (§19). */
 export const CF_ANALYTICS_TOKEN = ''; // e.g. 'xxxxxxxxxxxxxxxxxxxxxxxx'

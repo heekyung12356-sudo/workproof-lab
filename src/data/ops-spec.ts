@@ -109,6 +109,26 @@ export interface EscalationTrigger {
   mandatoryReport: boolean;
 }
 
+/* ------------------------- Reporting chain ------------------------------- */
+/* 대화내역: 실제 회사처럼 역할을 두고, 이슈별로 누구에게 보고할지 판단하게 한다. */
+export interface ReportingRole {
+  id: string;
+  label: string;
+  scope: string;
+}
+
+export const REPORTING_ROLES: ReportingRole[] = [
+  { id: 'senior', label: 'Senior Agent', scope: 'Peer help, second opinion on a case' },
+  { id: 'teamlead', label: 'Team Lead (You)', scope: 'Owns the shift, first escalation point' },
+  { id: 'opsmgr', label: 'Operations Manager', scope: 'Cross-team, mandatory-report incidents, capacity' },
+  { id: 'regional', label: 'Regional Manager', scope: 'Executive/regional reporting pressure' },
+  { id: 'csm', label: 'Client Success Manager', scope: 'Owns the customer relationship / renewal risk' },
+  { id: 'hr', label: 'HR Partner', scope: 'People, leave, fairness, conduct' },
+  { id: 'wfm', label: 'Workforce Management', scope: 'Staffing, shrinkage, coverage, schedules' },
+  { id: 'qa', label: 'QA Analyst', scope: 'Quality dips, coaching plans' },
+  { id: 'it', label: 'IT Support', scope: 'System outages, tooling failures' },
+];
+
 export const ESCALATION_TRIGGERS: EscalationTrigger[] = [
   {
     condition: 'VIP / Enterprise + Resolution SLA ≤ 30 min remaining',

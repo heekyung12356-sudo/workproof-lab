@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { DIMENSIONS } from '../data/scoring';
 import { KPI_DEFS, ESCALATION_CHAIN } from '../data/ops-spec';
+import { GLOSSARY, CONSOLE } from '../data/brand';
+import { SCENARIOS } from '../data/scenarios';
 
 const sections = [
   {
@@ -17,7 +19,7 @@ const sections = [
   {
     n: 3,
     title: 'System Design',
-    body: 'Static-first architecture (Astro, zero-JS by default) with a single interactive React island for the demo. Seeded data, a step-based scenario engine, a deterministic scoring rubric, dynamic result generation, and an optional AI review that always falls back to local. Deployed on Cloudflare Pages with an optional Pages Function for the AI route.',
+    body: `Static-first architecture (Astro, zero-JS by default) with a single interactive React island — ${CONSOLE.name}, a virtual operations console with a sidebar, top bar, and five views (Command Center, Operations Queue, Team Board, Crisis Room, WorkProof Report). Seeded data, a step-based scenario engine, a deterministic scoring rubric, dynamic result generation, and an optional AI review that always falls back to local. Deployed on Cloudflare Pages with a Pages Function for the AI route.`,
   },
 ];
 ---
@@ -89,15 +91,44 @@ const sections = [
         </div>
       </section>
 
+      <!-- Brand / no-clone -->
+      <section>
+        <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">4c.</span> Own brand, not a clone</h2>
+        <p class="mt-2 text-sm leading-relaxed text-fog-300">
+          Public tools (Zendesk, Salesforce, Jira, Freshdesk…) share a common work structure, but their
+          names, UI, and copy are protected IP. So {CONSOLE.name} abstracts the structure and renames every
+          concept — no logos, layouts, or wording are copied:
+        </p>
+        <div class="mt-3 overflow-hidden rounded-lg border border-line">
+          <table class="w-full text-left text-[13px]">
+            <thead class="bg-ink-800 text-fog-400"><tr><th class="px-3 py-2">Generic concept</th><th class="px-3 py-2">Our term</th></tr></thead>
+            <tbody class="divide-y divide-line">
+              {GLOSSARY.map((g) => (
+                <tr class="bg-ink-900/40"><td class="px-3 py-2 text-fog-400">{g.generic}</td><td class="px-3 py-2 font-semibold text-fog-200">{g.ours}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- 5. Scenario Engine -->
       <section>
         <h2 class="text-lg font-bold text-fog-100"><span class="font-mono text-sky">5.</span> Scenario Engine</h2>
         <p class="mt-2 text-sm leading-relaxed text-fog-300">
-          A step-based state machine (briefing → staffing → escalation → communication → recovery →
-          report → result) that reproduces the three things that make ops hard: time pressure (live SLA
-          clocks), incomplete information, and irreversible decisions (locked-in steps can’t be edited).
+          A step-based state machine that reproduces the three things that make ops hard: time pressure
+          (live SLA clocks), incomplete information (Rule Assist <em>suggests</em>, never decides), and
+          irreversible decisions (locked-in steps can’t be edited). Every important call also requires a
+          written <em>why</em>, and a dedicated step makes you route the <strong>reporting chain</strong> —
+          who to escalate to — scored against the correct roles. Four crises ship today:
+        </p>
+        <ul class="mt-2 space-y-1 text-sm text-fog-300">
+          {SCENARIOS.map((s) => (
+            <li>• <span class="font-mono text-[11px] text-fog-600">{s.code}</span> <strong class="text-fog-200">{s.name}</strong> — {s.tagline}</li>
+          ))}
+        </ul>
+        <p class="mt-2 text-sm leading-relaxed text-fog-400">
           The Command Center’s KPIs move causally with each call via a "grip factor" derived from the
-          quality of decisions made so far.
+          quality of decisions made so far — they are never static decoration.
         </p>
       </section>
 

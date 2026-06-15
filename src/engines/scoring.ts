@@ -1,95 +1,120 @@
 /* ===========================================================================
-   Scoring engine — deterministic, defensible. (지시서 §9)
-   입력: 단계별 선택 id + 자유 서술 보고서 텍스트
-   출력: 차원별 0–100 점수 + 가중 총점 + 등급
-   AI는 점수에 관여하지 않는다(소스 오브 트루스는 이 엔진).
+   Scoring engine — deterministic WorkProof Leadership Score across scenarios.
+   채점 대상은 "플레이하는 사람"(주로 채용담당자). 총점은 평가된 차원에 대해
+   가중치를 재정규화해 산출(미평가 차원으로 불이익 없음).
+   AI는 점수에 관여하지 않는다.
    =========================================================================== */
 import { DIMENSIONS, gradeFor, type Dimension } from '../data/scoring';
-import { SCENARIO_01, type DecisionStep } from '../data/scenarios/scenario01';
+import { getScenario } from '../data/scenarios';
 
 export interface SessionChoices {
-  /** stepId -> optionId */
+  scenarioId: string;
+  /** stepId -> optionId (choice steps) */
   selections: Record<string, string>;
-  /** report 단계 자유 서술 */
-  reportText: string;
+  /** stepId -> selected reporting-role ids (routing steps) */
+  routing: Record<string, string[]>;
+  /** stepId -> "why" memo */
+  memos: Record<string, string>;
+  /** stepId -> free-text report */
+  reports: Record<string, string>;
 }
 
 export interface DimensionScore {
   key: Dimension;
   label: string;
   weight: number;
-  score: number; // 0–100
+  score: number;
 }
 
 export interface ScoreResult {
-  dimensions: DimensionScore[];
-  total: number; // 0–100 가중 평균
+  dimensions: DimensionScore[]; // only exercised dimensions
+  total: number;
   grade: ReturnType<typeof gradeFor>;
-  /** 차원별 기여 출처(설명 가능성). */
-  breakdown: Record<Dimension, number[]>;
 }
 
-/* ------------------- 문서화(보고서) 휴리스틱 채점 --------------------- */
-/* 길이 + 기대 키워드 커버리지로 결정론적 점수 산출. */
+export function emptySession(scenarioId: string): SessionChoices {
+  return { scenarioId, selections: {}, routing: {}, memos: {}, reports: {} };
+}
+
+/* 보고서 휴리스틱: 길이 + 기대 키워드 커버리지 → 0–100. */
 export function scoreReport(text: string, hints: string[]): number {
   const t = (text || '').toLowerCase().trim();
-  if (t.length === 0) return 0;
-
+  if (!t) return 0;
   const words = t.split(/\s+/).filter(Boolean).length;
-  // 길이 점수: 15단어 미만은 빈약, 35단어 이상이면 충분 (0–40)
   const lengthScore = Math.max(0, Math.min(40, ((words - 8) / 27) * 40));
-
-  // 커버리지 점수: 기대 키워드 매칭 비율 (0–60)
-  const hit = hints.filter((h) => t.includes(h)).length;
-  const coverageScore = (hit / hints.length) * 60;
-
+  const hit = hints.length ? hints.filter((h) => t.includes(h)).length : 0;
+  const coverageScore = hints.length ? (hit / hints.length) * 60 : 0;
   return Math.round(Math.max(0, Math.min(100, lengthScore + coverageScore)));
 }
 
-export function computeScore(choices: SessionChoices): ScoreResult {
-  const breakdown: Record<Dimension, number[]> = {
-    prioritization: [],
-    staffing: [],
-    communication: [],
-    escalation: [],
-    documentation: [],
-    recovery: [],
+/* 라우팅(보고 체계) 정확도: Jaccard 유사도 × 100. */
+function scoreRouting(selected: string[], correct: string[]): number {
+  const sel = new Set(selected ?? []);
+  const cor = new Set(correct ?? []);
+  if (cor.size === 0) return 0;
+  let inter = 0;
+  cor.forEach((c) => sel.has(c) && inter++);
+  const union = new Set([...sel, ...cor]).size;
+  return Math.round((inter / union) * 100);
+}
+
+export function computeScore(s: SessionChoices): ScoreResult {
+  const scenario = getScenario(s.scenarioId);
+  const buckets: Record<Dimension, number[]> = {
+    prioritization: [], sla: [], staffing: [], communication: [], escalation: [],
+    people: [], fairness: [], risk: [], documentation: [], recovery: [], reporting: [], calmness: [],
   };
 
-  for (const step of SCENARIO_01.steps as DecisionStep[]) {
-    if (step.kind === 'choice') {
-      const chosenId = choices.selections[step.id];
-      const opt = step.options?.find((o) => o.id === chosenId);
-      if (!opt) continue;
-      for (const [dim, val] of Object.entries(opt.scores)) {
-        if (typeof val === 'number') breakdown[dim as Dimension].push(val);
+  if (scenario) {
+    for (const step of scenario.steps) {
+      if (step.kind === 'choice') {
+        const opt = step.options?.find((o) => o.id === s.selections[step.id]);
+        if (opt) {
+          for (const [dim, val] of Object.entries(opt.scores)) {
+            if (typeof val === 'number') buckets[dim as Dimension].push(val);
+          }
+        }
+      } else if (step.kind === 'routing') {
+        const acc = scoreRouting(s.routing[step.id] ?? [], step.routingCorrect ?? []);
+        for (const dim of step.scoresDimensions) buckets[dim].push(acc);
+      } else if (step.kind === 'report') {
+        const r = scoreReport(s.reports[step.id] ?? '', step.reportRubricHints ?? []);
+        for (const dim of step.scoresDimensions) buckets[dim].push(r);
       }
-    } else if (step.kind === 'report') {
-      const docScore = scoreReport(choices.reportText, step.reportRubricHints ?? []);
-      breakdown.documentation.push(docScore);
+    }
+
+    // 메모 품질 → documentation + calmness 소량 반영 (판단 근거 기록 = 증거).
+    const memoTexts = Object.values(s.memos).filter((m) => m && m.trim().length > 0);
+    if (memoTexts.length) {
+      const avgWords =
+        memoTexts.reduce((a, m) => a + m.trim().split(/\s+/).length, 0) / memoTexts.length;
+      const memoScore = Math.max(0, Math.min(100, ((avgWords - 4) / 16) * 100));
+      buckets.documentation.push(Math.round(memoScore));
+      buckets.calmness.push(Math.round(Math.min(100, 55 + memoScore * 0.4)));
     }
   }
 
-  const dimensions: DimensionScore[] = DIMENSIONS.map((d) => {
-    const contributions = breakdown[d.key];
-    const score = contributions.length
-      ? Math.round(contributions.reduce((a, b) => a + b, 0) / contributions.length)
-      : 0;
+  const exercised = DIMENSIONS.filter((d) => buckets[d.key].length > 0).map((d) => {
+    const arr = buckets[d.key];
+    const score = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
     return { key: d.key, label: d.label, weight: d.weight, score };
   });
 
-  const totalWeight = dimensions.reduce((a, d) => a + d.weight, 0);
+  const totalWeight = exercised.reduce((a, d) => a + d.weight, 0) || 1;
   const total = Math.round(
-    dimensions.reduce((a, d) => a + d.score * d.weight, 0) / totalWeight
+    exercised.reduce((a, d) => a + d.score * d.weight, 0) / totalWeight
   );
 
-  return { dimensions, total, grade: gradeFor(total), breakdown };
+  return { dimensions: exercised, total, grade: gradeFor(total) };
 }
 
-/** 완료 여부: 모든 choice 단계 선택됨 + 보고서 작성됨. */
-export function isComplete(choices: SessionChoices): boolean {
-  const choiceSteps = SCENARIO_01.steps.filter((s) => s.kind === 'choice');
-  const allChosen = choiceSteps.every((s) => Boolean(choices.selections[s.id]));
-  const reported = (choices.reportText || '').trim().length > 0;
-  return allChosen && reported;
+export function isComplete(s: SessionChoices): boolean {
+  const scenario = getScenario(s.scenarioId);
+  if (!scenario) return false;
+  return scenario.steps.every((step) => {
+    if (step.kind === 'choice') return Boolean(s.selections[step.id]);
+    if (step.kind === 'routing') return (s.routing[step.id]?.length ?? 0) > 0;
+    if (step.kind === 'report') return (s.reports[step.id] ?? '').trim().length > 0;
+    return true;
+  });
 }

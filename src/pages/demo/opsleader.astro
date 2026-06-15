@@ -1,22 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
-import OpsLeaderDemo from '../../components/demo/OpsLeaderDemo.tsx';
-import { SCENARIO_01 } from '../../data/scenarios/scenario01';
+import OpsConsole from '../../components/console/OpsConsole.tsx';
 ---
 
 <Base
-  title="Play the Ops Crisis"
-  description="Step into a Monday-morning ops crisis — staffing shortage, VIP SLA risk, a junior agent's data mistake, and executive reporting pressure. No login. Make the calls yourself."
+  title="CommandDesk — the live ops console"
+  description="Step into CommandDesk, a virtual operations console. Run a real shift, then enter the Crisis Room — staffing shortage, VIP SLA risk, a junior's data mistake, a system outage, a leave conflict — and make the calls yourself. No login."
 >
-  <div class="mx-auto max-w-6xl px-4 py-8">
-    <header class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">
-        OpsLeader WorkProof Lab · Scenario 01
+  <div class="mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
+    <header class="mb-4">
+      <p class="text-xs font-semibold uppercase tracking-wider text-fog-500">OpsLeader WorkProof Lab</p>
+      <h1 class="mt-1 text-2xl font-bold text-fog-100">CommandDesk — run the shift, then survive the crisis</h1>
+      <p class="text-sm text-fog-400">
+        A virtual operations console. Browse the Command Center, queue, and team — then open the
+        <span class="text-rose">Crisis Room</span>. No login; your progress saves automatically.
       </p>
-      <h1 class="mt-1 text-2xl font-bold text-fog-100">{SCENARIO_01.name}</h1>
-      <p class="text-sm text-fog-400">{SCENARIO_01.tagline}</p>
     </header>
 
-    <OpsLeaderDemo client:load />
+    <OpsConsole client:load />
   </div>
 </Base>
